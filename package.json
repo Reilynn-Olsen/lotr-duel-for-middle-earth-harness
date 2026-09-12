@@ -1,0 +1,30 @@
+{
+  "name": "lotr-duel-harness",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "start": "tsx src/index.ts",
+    "harness": "tsx src/index.ts",
+    "check": "tsc --noEmit",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "lint": "eslint src test --max-warnings=0",
+    "test": "tsx --test test/**/*.ts",
+    "test:contract": "tsx --test test/rules-server.contract.ts",
+    "test:e2e": "CI=true tsx src/index.ts tournament --config benchmark.yaml --games-per-pairing 1 --max-actions 2 --concurrency 1 --server-command \"node test/fixtures/fake-server.mjs valid\" --server-cwd . --output /tmp/lotr-harness-e2e"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.25.1",
+    "@types/node": "^22.15.0",
+    "eslint": "^9.25.1",
+    "prettier": "^3.5.3",
+    "tsx": "^4.19.0",
+    "typescript": "^5.8.0",
+    "typescript-eslint": "^8.30.1"
+  },
+  "dependencies": {
+    "dotenv": "^16.5.0",
+    "zod": "^3.24.0"
+  }
+}

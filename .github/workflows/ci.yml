@@ -1,0 +1,33 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run format:check
+      - run: npm run lint
+      - run: npm run check
+      - run: npm test
+      - run: npm run test:contract
+      - run: npm run test:e2e
+      - name: Upload sample report and logs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: harness-artifacts
+          path: |
+            /tmp/lotr-harness-e2e/report.html
+            /tmp/lotr-harness-e2e/events.jsonl
+            /tmp/lotr-harness-e2e/evaluation.json
+            /tmp/lotr-harness-e2e/*.csv
+          if-no-files-found: warn

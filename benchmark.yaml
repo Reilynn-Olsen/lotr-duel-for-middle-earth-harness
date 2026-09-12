@@ -1,0 +1,7 @@
+model: random
+opponentModel: random
+masterSeed: 20260911
+gamesPerPairing: 20
+concurrency: 4
+matchTimeoutMs: 300000
+maxActions: 500
