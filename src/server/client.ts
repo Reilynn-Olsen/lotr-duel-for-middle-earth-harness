@@ -84,7 +84,11 @@ export class RulesServerClient {
     cwd: string,
     private readonly timeoutMs: number,
   ) {
-    this.child = spawn(command, [], { cwd, shell: true, stdio: "pipe" });
+    this.child = spawn(command, [], {
+      cwd,
+      shell: process.env.RULES_SERVER_SHELL || true,
+      stdio: "pipe",
+    });
     this.child.stdout.setEncoding("utf8");
     this.child.stdout.on("data", (chunk: string) => this.consume(chunk));
     this.child.stdout.on("end", () => {

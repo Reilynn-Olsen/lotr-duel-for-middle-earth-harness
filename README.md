@@ -83,6 +83,10 @@ npm ci && npm run format:check && npm run lint && npm run check && npm test && n
 The default Rust command is `cargo run --bin rules_server -- --jsonl`; override
 it with `--server-command` when needed.
 
+On a minimal or Nix-based Linux host without `/bin/sh`, set
+`RULES_SERVER_SHELL` to an installed shell executable, such as the result of
+`command -v bash`.
+
 ## Architecture
 
 ```mermaid
