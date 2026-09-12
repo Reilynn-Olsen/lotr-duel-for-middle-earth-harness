@@ -16,7 +16,10 @@ const response = (request, overrides = {}) => ({
   winner: null,
   observation:
     request.type === "hello" || request.type === "new" ? null : "public",
-  legalActions: request.type === "state" ? [{ actionId: "action-1" }] : [],
+  legalActions:
+    request.type === "state"
+      ? [{ actionId: "action-1", description: "Take the test action." }]
+      : [],
   capabilities:
     request.type === "hello" ? ["opaque_action_ids", "state_revision"] : [],
   error: null,

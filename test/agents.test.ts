@@ -15,7 +15,11 @@ import { RandomAgent, ScriptedAgent } from "../src/agents/test-agents.js";
 
 const context = (signal = new AbortController().signal): AgentContext => ({
   observation: "public state",
-  legalActions: [{ actionId: "a" }, { actionId: "b" }, { actionId: "c" }],
+  legalActions: [
+    { actionId: "a", description: "Take action A." },
+    { actionId: "b", description: "Take action B." },
+    { actionId: "c", description: "Take action C." },
+  ],
   gameId: "server-game",
   matchId: "match-1",
   seat: "sauron",
@@ -156,7 +160,11 @@ test("OpenRouter metadata IDs can distinguish identical model seats", () => {
   assert.equal(first.metadata.model, second.metadata.model);
 });
 test("OpenRouter accepts standard response metadata", async () => {
-  let requestBody: { max_tokens?: number; reasoning_effort?: string } = {};
+  let requestBody: {
+    max_tokens?: number;
+    reasoning_effort?: string;
+    messages?: Array<{ content: string }>;
+  } = {};
   const agent = new OpenRouterAgent({
     model: "m",
     apiKey: "secret",
@@ -192,6 +200,12 @@ test("OpenRouter accepts standard response metadata", async () => {
   assert.equal((await agent.choose(context())).actionId, "a");
   assert.equal(requestBody.max_tokens, 512);
   assert.equal(requestBody.reasoning_effort, "minimal");
+  const prompt = JSON.parse(requestBody.messages?.[1]?.content ?? "{}");
+  assert.deepEqual(prompt.legalActions, [
+    { actionId: "a", description: "Take action A." },
+    { actionId: "b", description: "Take action B." },
+    { actionId: "c", description: "Take action C." },
+  ]);
 });
 test("retryable 5xx retries and authentication failures do not", async () => {
   let calls = 0;

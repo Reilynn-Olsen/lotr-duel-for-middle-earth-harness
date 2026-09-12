@@ -53,7 +53,14 @@ const StateResponseFields = {
   outcome: OutcomeSchema,
   winner: FactionSchema.nullable(),
   observation: z.string(),
-  legalActions: z.array(z.object({ actionId: z.string().min(1) }).strict()),
+  legalActions: z.array(
+    z
+      .object({
+        actionId: z.string().min(1),
+        description: z.string().min(1),
+      })
+      .strict(),
+  ),
 };
 
 export const ServerResponseSchema = z.discriminatedUnion("type", [
