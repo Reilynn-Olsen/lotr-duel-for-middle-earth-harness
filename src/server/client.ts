@@ -84,11 +84,8 @@ export class RulesServerClient {
     cwd: string,
     private readonly timeoutMs: number,
   ) {
-    this.child = spawn(command, [], {
-      cwd,
-      shell: process.env.RULES_SERVER_SHELL || true,
-      stdio: "pipe",
-    });
+    const [file, ...args] = splitCommand(command);
+    this.child = spawn(file, args, { cwd, stdio: "pipe" });
     this.child.stdout.setEncoding("utf8");
     this.child.stdout.on("data", (chunk: string) => this.consume(chunk));
     this.child.stdout.on("end", () => {
@@ -309,4 +306,35 @@ export class RulesServerClient {
     for (const [requestId] of this.pending)
       this.rejectPending(requestId, this.crashed);
   }
+}
+
+function splitCommand(command: string): [string, ...string[]] {
+  const parts: string[] = [];
+  let part = "";
+  let quote: '"' | "'" | undefined;
+  let escaped = false;
+  for (const character of command.trim()) {
+    if (escaped) {
+      part += character;
+      escaped = false;
+    } else if (character === "\\" && quote !== "'") escaped = true;
+    else if (quote) {
+      if (character === quote) quote = undefined;
+      else part += character;
+    } else if (character === '"' || character === "'") quote = character;
+    else if (/\s/.test(character)) {
+      if (part) {
+        parts.push(part);
+        part = "";
+      }
+    } else part += character;
+  }
+  if (escaped || quote)
+    throw new ServerError(
+      "rules_server command has an unfinished escape or quote",
+    );
+  if (part) parts.push(part);
+  if (parts.length === 0)
+    throw new ServerError("rules_server command is empty");
+  return parts as [string, ...string[]];
 }
