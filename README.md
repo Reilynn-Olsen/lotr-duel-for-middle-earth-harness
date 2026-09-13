@@ -135,6 +135,30 @@ maxActions: 500
 The compact YAML reader supports flat scalar configuration. JSON is also
 supported. Provider credentials belong in environment variables only.
 
+## Round-Robin Snapshot
+
+The local artifacts in `round-robin/runs` contain six head-to-head runs among
+GPT-5 Nano, DeepSeek V4.1 Flash, Muse Spark 1.3 Contributor, and `random`.
+Each pairing planned 15 games with master seed `42`, concurrency `2`, a
+600-second agent timeout, and one retry.
+
+| Pairing                                           | Completed result                  | Incomplete games        |
+| ------------------------------------------------- | --------------------------------- | ----------------------- |
+| DeepSeek V4.1 Flash vs Muse Spark 1.3 Contributor | Muse won 1-0                      | 10 failures, 4 forfeits |
+| DeepSeek V4.1 Flash vs random                     | DeepSeek won 4-0, with 1 draw     | 10 forfeits             |
+| Muse Spark 1.3 Contributor vs random              | Muse won 15-0                     | None                    |
+| GPT-5 Nano vs DeepSeek V4.1 Flash                 | DeepSeek won 1-0                  | 6 failures, 8 forfeits  |
+| GPT-5 Nano vs Muse Spark 1.3 Contributor          | Muse won 15-0                     | None                    |
+| GPT-5 Nano vs random                              | GPT-5 Nano won 10-1, with 4 draws | None                    |
+
+Across the 90 planned games, 52 completed, 16 failed, and 22 were forfeited.
+The completed games show a substantial seat effect: seat swapping was disabled
+and Fellowship won 45 of 47 decisive games. Consequently, these results are a
+useful operational snapshot, but not a fair cross-model ranking. Repeat the
+round robin with seat swaps enabled and resolve the failure/forfeit causes
+before drawing comparative conclusions. Costs are unavailable because the run
+artifacts contain no cost events.
+
 ## Outputs
 
 Each run contains `events.jsonl`, `checkpoint.json`, game results,
